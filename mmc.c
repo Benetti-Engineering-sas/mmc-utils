@@ -26,7 +26,7 @@
 
 #include "mmc_cmds.h"
 
-typedef int (*CommandFunction)(int argc, char **argv);
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 struct Command {
 	CommandFunction	func;	/* function which implements the command */
@@ -545,6 +545,22 @@ static int parse_args(int argc, char **argv,
 
 	return 1;
 }
+
+void print_usage(CommandFunction func)
+{
+	int num_commands = ARRAY_SIZE(commands);
+	int i;
+
+	for (i = 0; i < num_commands; i++) {
+		if (commands[i].func == func) {
+			print_help(&commands[i]);
+			return;
+		}
+	}
+
+	fprintf(stderr, "Error: Command not found for the given function pointer.\n");
+}
+
 int main(int ac, char **av )
 {
 	char *cmd = NULL, **args = NULL;
