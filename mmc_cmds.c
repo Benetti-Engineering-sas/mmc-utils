@@ -265,7 +265,7 @@ int do_writeprotect_boot_get(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc writeprotect boot get </path/to/mmcblkX>\n");
+		print_usage(do_writeprotect_boot_get);
 		exit(1);
 	}
 
@@ -307,11 +307,7 @@ int do_writeprotect_boot_set(int nargs, char **argv)
 #endif
 
 	if (nargs < 1 + argi ||  nargs > 2 + argi) {
-		fprintf(stderr, "Usage: mmc writeprotect boot set "
-#ifdef DANGEROUS_COMMANDS_ENABLED
-			"[-p] "
-#endif
-			"</path/to/mmcblkX> [0|1]\n");
+		print_usage(do_writeprotect_boot_set);
 		exit(1);
 	}
 
@@ -413,7 +409,7 @@ int do_writeprotect_user_get(int nargs, char **argv)
 	int remain;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc writeprotect user get </path/to/mmcblkX>\n");
+		print_usage(do_writeprotect_user_get);
 		exit(1);
 	}
 
@@ -560,8 +556,7 @@ int do_writeprotect_user_set(int nargs, char **argv)
 	return ret;
 
 usage:
-	fprintf(stderr,
-		"Usage: mmc writeprotect user set <type><start block><blocks><device>\n");
+	print_usage(do_writeprotect_user_set);
 	exit(1);
 }
 
@@ -572,7 +567,7 @@ int do_disable_512B_emulation(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc disable 512B emulation </path/to/mmcblkX>\n");
+		print_usage(do_disable_512B_emulation);
 		exit(1);
 	}
 
@@ -623,7 +618,7 @@ int do_write_boot_en(int nargs, char **argv)
 	int boot_area, send_ack;
 
 	if (nargs != 4) {
-		fprintf(stderr, "Usage: mmc bootpart enable <partition_number> <send_ack> </path/to/mmcblkX>\n");
+		print_usage(do_write_boot_en);
 		exit(1);
 	}
 
@@ -694,7 +689,7 @@ int do_boot_bus_conditions_set(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 5) {
-		fprintf(stderr, "Usage: mmc: bootbus set <boot_mode> <reset_boot_bus_conditions> <boot_bus_width> <device>\n");
+		print_usage(do_boot_bus_conditions_set);
 		exit(1);
 	}
 
@@ -762,11 +757,6 @@ static int do_hwreset(int value, int nargs, char **argv)
 	int fd, ret;
 	char *device;
 
-	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc hwreset enable </path/to/mmcblkX>\n");
-		exit(1);
-	}
-
 	device = argv[1];
 
 	fd = open(device, O_RDWR);
@@ -810,11 +800,21 @@ static int do_hwreset(int value, int nargs, char **argv)
 
 int do_hwreset_en(int nargs, char **argv)
 {
+        if (nargs != 2) {
+		print_usage(do_hwreset_en);
+		exit(1);
+	}
+
 	return do_hwreset(EXT_CSD_HW_RESET_EN, nargs, argv);
 }
 
 int do_hwreset_dis(int nargs, char **argv)
 {
+        if (nargs != 2) {
+		print_usage(do_hwreset_dis);
+		exit(1);
+	}
+
 	return do_hwreset(EXT_CSD_HW_RESET_DIS, nargs, argv);
 }
 
@@ -826,7 +826,7 @@ int do_write_bkops_en(int nargs, char **argv)
 	char *en_type;
 
 	if (nargs != 3) {
-		fprintf(stderr, "Usage: mmc bkops_en <auto|manual> </path/to/mmcblkX>\n");
+		print_usage(do_write_bkops_en);
 		exit(1);
 	}
 
@@ -877,7 +877,7 @@ int do_status_get(int nargs, char **argv)
 	__u8 state;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc status get </path/to/mmcblkX>\n");
+		print_usage(do_status_get);
 		exit(1);
 	}
 
@@ -1166,7 +1166,7 @@ int do_create_gp_partition(int nargs, char **argv)
 	unsigned long align;
 
 	if (nargs != 7) {
-		fprintf(stderr, "Usage: mmc gp create <-y|-n|-c> <length KiB> <partition> <enh_attr> <ext_attr> </path/to/mmcblkX>\n");
+		print_usage(do_create_gp_partition);
 		exit(1);
 	}
 
@@ -1294,7 +1294,7 @@ int do_enh_area_set(int nargs, char **argv)
 	unsigned long align;
 
 	if (nargs != 5) {
-		fprintf(stderr, "Usage: mmc enh_area set <-y|-n|-c> <start KiB> <length KiB> </path/to/mmcblkX>\n");
+		print_usage(do_enh_area_set);
 		exit(1);
 	}
 
@@ -1441,7 +1441,7 @@ int do_write_reliability_set(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 4) {
-		fprintf(stderr,"Usage: mmc write_reliability set <-y|-n|-c> <partition> </path/to/mmcblkX>\n");
+		print_usage(do_write_reliability_set);
 		exit(1);
 	}
 
@@ -1506,7 +1506,7 @@ int do_read_extcsd(int nargs, char **argv)
 	const char *str;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc extcsd read </path/to/mmcblkX>\n");
+		print_usage(do_read_extcsd);
 		exit(1);
 	}
 
@@ -2017,7 +2017,7 @@ int do_write_extcsd(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 4) {
-		fprintf(stderr, "Usage: mmc extcsd write <offset> <value> </path/to/mmcblkX>\n");
+		print_usage(do_write_extcsd);
 		exit(1);
 	}
 
@@ -2049,7 +2049,7 @@ int do_sanitize(int nargs, char **argv)
 	unsigned int timeout = 0;
 
 	if (nargs != 2 && nargs != 3) {
-		fprintf(stderr, "Usage: mmc sanitize </path/to/mmcblkX> [timeout_in_ms]\n");
+		print_usage(do_sanitize);
 		exit(1);
 	}
 
@@ -2279,7 +2279,7 @@ int do_rpmb_write_key(int nargs, char **argv)
 	}, frame_out = {};
 
 	if (nargs != 3) {
-		fprintf(stderr, "Usage: mmc rpmb write-key </path/to/mmcblkXrpmb> </path/to/key>\n");
+		print_usage(do_rpmb_write_key);
 		exit(1);
 	}
 
@@ -2342,7 +2342,7 @@ int do_rpmb_read_counter(int nargs, char **argv)
 	unsigned int cnt;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc rpmb read-counter </path/to/mmcblkXrpmb>\n");
+		print_usage(do_rpmb_read_counter);
 		exit(1);
 	}
 
@@ -2382,7 +2382,7 @@ int do_rpmb_read_block(int nargs, char **argv)
 	}, *frame_out_p;
 
 	if (nargs != 5 && nargs != 6) {
-		fprintf(stderr, "Usage: mmc rpmb read-block </path/to/mmcblkXrpmb> <address> <blocks count> </path/to/output_file> [/path/to/key]\n");
+		print_usage(do_rpmb_read_block);
 		exit(1);
 	}
 
@@ -2530,7 +2530,7 @@ static bool secure_wp_supported(char *device)
 }
 
 static int rpmb_auth_write(int nargs, char **argv, uint16_t addr,
-			   uint8_t config_data, char *usage)
+			   uint8_t config_data)
 {
 	int ret, dev_fd;
 	unsigned int cnt;
@@ -2540,10 +2540,8 @@ static int rpmb_auth_write(int nargs, char **argv, uint16_t addr,
 		.addr	     = htobe16(addr),
 	}, frame_out = {};
 
-	if (nargs != 4) {
-		fprintf(stderr, "%s", usage);
-		return EXIT_FAILURE;
-	}
+	if (nargs != 4)
+		return -EINVAL;
 
 	if (!secure_wp_supported(argv[1])) {
 		fprintf(stderr, "secure wp not supported %s", argv[1]);
@@ -2590,7 +2588,7 @@ out:
 	return ret;
 }
 
-static int rpmb_auth_read(int nargs, char **argv, char *usage)
+static int rpmb_auth_read(int nargs, char **argv)
 {
 	int ret, dev_fd;
 	struct rpmb_frame frame_in = {
@@ -2598,10 +2596,8 @@ static int rpmb_auth_read(int nargs, char **argv, char *usage)
 	}, frame_out = {};
 	unsigned char key[32] = {};
 
-	if (nargs != 3 && nargs != 4) {
-		fprintf(stderr, "%s", usage);
-		return EXIT_FAILURE;
-	}
+	if (nargs != 3 && nargs != 4)
+                return -EINVAL;
 
 	if (!secure_wp_supported(argv[1])) {
 		fprintf(stderr, "secure wp not supported %s", argv[1]);
@@ -2667,37 +2663,57 @@ out:
 
 int do_rpmb_sec_wp_enable(int nargs, char **argv)
 {
-	char *usage = "Usage: mmc rpmb secure-wp-mode-on </path/to/mmcblkx> </path/to/mmcblkXrpmb> </path/to/key>\n";
+        int ret;
 
-	return rpmb_auth_write(nargs, argv, 1, 1, usage);
+	ret = rpmb_auth_write(nargs, argv, 1, 1);
+        if (ret == -EINVAL)
+                print_usage(do_rpmb_sec_wp_enable);
+
+        return ret;
 }
 
 int do_rpmb_sec_wp_disable(int nargs, char **argv)
 {
-	char *usage = "Usage: mmc rpmb secure-wp-mode-off </path/to/mmcblkx> </path/to/mmcblkXrpmb> </path/to/key>\n";
+        int ret;
 
-	return rpmb_auth_write(nargs, argv, 1, 0, usage);
+        ret = rpmb_auth_write(nargs, argv, 1, 0);
+        if (ret == -EINVAL)
+                print_usage(do_rpmb_sec_wp_disable);
+
+        return ret;
 }
 
 int do_rpmb_sec_wp_mode_set(int nargs, char **argv)
 {
-	char *usage = "Usage: mmc rpmb secure-wp-disable </path/to/mmcblkx> </path/to/mmcblkXrpmb> </path/to/key>\n";
+        int ret;
 
-	return rpmb_auth_write(nargs, argv, 2, 1, usage);
+        ret = rpmb_auth_write(nargs, argv, 2, 1);
+        if (ret == -EINVAL)
+                print_usage(do_rpmb_sec_wp_mode_set);
+
+        return ret;
 }
 
 int do_rpmb_sec_wp_mode_clear(int nargs, char **argv)
 {
-	char *usage = "Usage: mmc rpmb secure-wp-enable </path/to/mmcblkx> </path/to/mmcblkXrpmb> </path/to/key>\n";
+        int ret;
 
-	return rpmb_auth_write(nargs, argv, 2, 0, usage);
+        ret = rpmb_auth_write(nargs, argv, 2, 0);
+        if (ret == -EINVAL)
+                print_usage(do_rpmb_sec_wp_mode_clear);
+
+        return ret;
 }
 
 int do_rpmb_sec_wp_en_read(int nargs, char **argv)
 {
-	char *usage = "Usage: mmc rpmb secure-wp-enable-read <path/to/mmcblk0> </path/to/mmcblkXrpmb> [/path/to/key]\n";
+        int ret;
 
-	return rpmb_auth_read(nargs, argv, usage);
+        ret = rpmb_auth_read(nargs, argv);
+        if (ret == -EINVAL)
+                print_usage(do_rpmb_sec_wp_en_read);
+
+        return ret;
 }
 
 int do_rpmb_write_block(int nargs, char **argv)
@@ -2711,7 +2727,7 @@ int do_rpmb_write_block(int nargs, char **argv)
 	}, frame_out = {};
 
 	if (nargs != 5) {
-		fprintf(stderr, "Usage: mmc rpmb write-block </path/to/mmcblkXrpmb> <address> </path/to/input_file> </path/to/key>\n");
+		print_usage(do_rpmb_write_block);
 		exit(1);
 	}
 
@@ -2791,11 +2807,6 @@ static int do_cache_ctrl(int value, int nargs, char **argv)
 	int fd, ret;
 	char *device;
 
-	if (nargs != 2) {
-	       fprintf(stderr, "Usage: mmc cache enable </path/to/mmcblkX>\n");
-	       exit(1);
-	}
-
 	device = argv[1];
 
 	fd = open(device, O_RDWR);
@@ -2841,11 +2852,21 @@ static int do_cache_ctrl(int value, int nargs, char **argv)
 
 int do_cache_en(int nargs, char **argv)
 {
+        if (nargs != 2) {
+		print_usage(do_cache_en);
+		exit(1);
+	}
+
 	return do_cache_ctrl(1, nargs, argv);
 }
 
 int do_cache_dis(int nargs, char **argv)
 {
+        if (nargs != 2) {
+		print_usage(do_cache_dis);
+		exit(1);
+	}
+
 	return do_cache_ctrl(0, nargs, argv);
 }
 
@@ -2926,7 +2947,7 @@ int do_erase(int nargs, char **argv)
 	__u32 arg, start, end;
 
 	if (nargs != 5) {
-		fprintf(stderr, "Usage: erase <type> <start addr> <end addr> </path/to/mmcblkX>\n");
+		print_usage(do_erase);
 		exit(1);
 	}
 
@@ -3443,7 +3464,7 @@ int do_general_cmd_read(int nargs, char **argv)
 	struct mmc_ioc_cmd idata;
 
 	if (nargs != 2 && nargs != 3) {
-		fprintf(stderr, "Usage: gen_cmd read </path/to/mmcblkX> [arg]\n");
+		print_usage(do_general_cmd_read);
 		exit(1);
 	}
 
@@ -3515,7 +3536,7 @@ int do_softreset(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc softreset </path/to/mmcblkX>\n");
+		print_usage(do_softreset);
 		exit(1);
 	}
 
@@ -3530,7 +3551,7 @@ int do_preidle(int nargs, char **argv)
 	char *device;
 
 	if (nargs != 2) {
-		fprintf(stderr, "Usage: mmc preidle </path/to/mmcblkX>\n");
+		print_usage(do_preidle);
 		exit(1);
 	}
 
@@ -3550,7 +3571,7 @@ int do_alt_boot_op(int nargs, char **argv)
 	unsigned int boot_blocks, ext_csd_boot_size;
 
 	if (nargs != 3) {
-		fprintf(stderr, "Usage: mmc boot_op <boot_data_file> </path/to/mmcblkX>\n");
+		print_usage(do_alt_boot_op);
 		exit(1);
 	}
 	boot_data_file = argv[1];
