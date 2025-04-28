@@ -316,31 +316,21 @@ static char *get_prgname(char *programname)
 	return np;
 }
 
-static void print_help(char *programname, struct Command *cmd)
+static void print_help(struct Command *cmd)
 {
-	char	*pc;
-
-	printf("\t%s %s ", programname, cmd->verb );
-
-	for(pc = cmd->help; *pc; pc++){
-		putchar(*pc);
-		if(*pc == '\n')
-			printf("\t\t");
-	}
-
-	putchar('\n');
+        printf("------------------------------------------------\n");
+        printf("Usage for command\t%s %s\n", cmd->verb, cmd->help);
 }
 
 static void help(char *np)
 {
 	struct Command *cp;
 
-	printf("Usage:\n");
 	for( cp = commands; cp->verb; cp++ )
-		print_help(np, cp);
+		print_help(cp);
 
-	printf("\n\t%s help|--help|-h\n\t\tShow the help.\n",np);
-	printf("\n\t%s <cmd> --help\n\t\tShow detailed help for a command or subset of commands.\n",np);
+	printf("\n\t%s help|--help|-h\n\t\tShow the help.\n", np);
+	printf("\n\t%s <cmd> --help\n\t\tShow detailed help for a command or subset of commands.\n", np);
 	printf("\n%s\n", VERSION);
 }
 
@@ -504,7 +494,7 @@ static int parse_args(int argc, char **argv,
 		if(argc>i+1 && !strcmp(argv[i+1],"--help")){
 			if(!helprequested)
 				printf("Usage:\n");
-			print_help(prgname, cp);
+			print_help(cp);
 			helprequested=1;
 			continue;
 		}
