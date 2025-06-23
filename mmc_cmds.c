@@ -2289,7 +2289,7 @@ int do_rpmb_write_key(int nargs, char **argv)
 		exit(1);
 	}
 
-	ret = rpmb_get_key(argv[2], &frame_in, NULL, false);
+	ret = rpmb_get_key(argv[2], &frame_in, frame_in.key_mac, false);
 	if (ret)
 		return ret;
 	/* Execute RPMB op */
