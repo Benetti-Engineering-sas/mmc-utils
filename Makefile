@@ -1,5 +1,7 @@
 CC ?= gcc
-GIT_VERSION := "$(shell git describe --abbrev=6 --always --tags)"
+# GIT_VERSION is set to the latest tag, number of commits since that tag, and the date of the last commit
+# e.g., v1.0-5-2023-10-01
+GIT_VERSION := "$(shell git describe --abbrev=0 --tags)-$$(git rev-list --count $$(git describe --abbrev=0 --tags)..HEAD)-$$(git log -1 --format=%cd --date=short)"
 AM_CFLAGS = -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2 \
 	    -DVERSION=\"$(GIT_VERSION)\"
 CFLAGS ?= -g -O2
