@@ -573,6 +573,10 @@ int main(int ac, char **av )
 	int nargs = 0, r;
 	CommandFunction func = NULL;
 
+	printf("\n┌───────────────────────────────────────────────┐\n");
+	printf("│  mmc-utils version: %-24s  │\n", VERSION);
+	printf("└───────────────────────────────────────────────┘\n\n");
+
 	r = parse_args(ac, av, &func, &nargs, &cmd, &args);
 	if( r <= 0 ){
 		/* error or no command to parse*/
