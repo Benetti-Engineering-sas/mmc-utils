@@ -460,9 +460,15 @@ static int parse_args(int argc, char **argv,
 	char		*prgname = get_prgname(argv[0]);
 	int		i=0, helprequested=0;
 
-	if( argc < 2 || !strcmp(argv[1], "help") ||
+	if(argc < 2 || !strcmp(argv[1], "help") ||
 		!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")){
 		help(prgname);
+		return 0;
+	}
+
+	if(!strcmp(argv[1], "ver") || !strcmp(argv[1], "-ver") || !strcmp(argv[1], "--ver") ||
+	   !strcmp(argv[1], "version") || !strcmp(argv[1], "-version") || !strcmp(argv[1], "--version")){
+		printf("%s\n", VERSION);
 		return 0;
 	}
 
