@@ -3421,8 +3421,7 @@ static int __do_ffu(int nargs, char **argv, enum ffu_download_mode ffu_mode)
 		fprintf(stderr, "FFU finished successfully\n");
 
 out:
-	if (fw_buf)
-		free(fw_buf);
+	free(fw_buf);
 	close(img_fd);
 	close(dev_fd);
 	return ret;
@@ -3651,10 +3650,8 @@ int do_alt_boot_op(int nargs, char **argv)
 	ret = 0;
 
 alloced_error:
-	if (mioc)
-		free(mioc);
-	if (boot_buf)
-		free(boot_buf);
+	free(mioc);
+	free(boot_buf);
 boot_data_close:
 	close(boot_data_fd);
 dev_fd_close:
