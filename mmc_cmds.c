@@ -77,8 +77,8 @@ static inline __u32 per_byte_htole32(__u8 *arr)
 static int read_extcsd(int fd, __u8 *ext_csd)
 {
 	int ret = 0;
-	struct mmc_ioc_cmd idata;
-	memset(&idata, 0, sizeof(idata));
+	struct mmc_ioc_cmd idata = {};
+
 	memset(ext_csd, 0, sizeof(__u8) * 512);
 	idata.write_flag = 0;
 	idata.opcode = MMC_SEND_EXT_CSD;
@@ -125,9 +125,8 @@ write_extcsd_value(int fd, __u8 index, __u8 value, unsigned int timeout_ms)
 static int send_status(int fd, __u32 *response)
 {
 	int ret = 0;
-	struct mmc_ioc_cmd idata;
+	struct mmc_ioc_cmd idata = {};
 
-	memset(&idata, 0, sizeof(idata));
 	idata.opcode = MMC_SEND_STATUS;
 	idata.arg = (1 << 16);
 	idata.flags = MMC_RSP_R1 | MMC_CMD_AC;
@@ -159,9 +158,8 @@ static __u32 get_size_in_blks(int fd)
 static int set_write_protect(int fd, __u32 blk_addr, int on_off)
 {
 	int ret = 0;
-	struct mmc_ioc_cmd idata;
+	struct mmc_ioc_cmd idata = {};
 
-	memset(&idata, 0, sizeof(idata));
 	idata.write_flag = 1;
 	if (on_off)
 		idata.opcode = MMC_SET_WRITE_PROT;
@@ -180,12 +178,11 @@ static int set_write_protect(int fd, __u32 blk_addr, int on_off)
 static int send_write_protect_type(int fd, __u32 blk_addr, __u64 *group_bits)
 {
 	int ret = 0;
-	struct mmc_ioc_cmd idata;
+	struct mmc_ioc_cmd idata = {};
 	__u8 buf[8];
 	__u64 bits = 0;
 	int x;
 
-	memset(&idata, 0, sizeof(idata));
 	idata.write_flag = 0;
 	idata.opcode = MMC_SEND_WRITE_PROT_TYPE;
 	idata.blksz      = 8,
@@ -2192,9 +2189,7 @@ static int do_rpmb_op(int fd, const struct rpmb_frame *frame_in,
 	u_int16_t rpmb_type;
 	struct mmc_ioc_multi_cmd *mioc;
 	struct mmc_ioc_cmd *ioc;
-	struct rpmb_frame frame_status;
-
-	memset(&frame_status, 0, sizeof(frame_status));
+	struct rpmb_frame frame_status = {};
 
 	if (!frame_in || !frame_out || !out_cnt)
 		return -EINVAL;
@@ -3121,9 +3116,7 @@ static bool ffu_is_supported(__u8 *ext_csd, char *device)
 static int enter_ffu_mode(int dev_fd)
 {
 	int ret;
-	struct mmc_ioc_cmd cmd;
-
-	memset(&cmd, 0, sizeof(cmd));
+	struct mmc_ioc_cmd cmd = {};
 
 	fill_switch_cmd(&cmd, EXT_CSD_MODE_CONFIG, EXT_CSD_FFU_MODE);
 	ret = ioctl(dev_fd, MMC_IOC_CMD, &cmd);
@@ -3136,9 +3129,7 @@ static int enter_ffu_mode(int dev_fd)
 static int exit_ffu_mode(int dev_fd)
 {
 	int ret;
-	struct mmc_ioc_cmd cmd;
-
-	memset(&cmd, 0, sizeof(cmd));
+	struct mmc_ioc_cmd cmd = {};
 
 	fill_switch_cmd(&cmd, EXT_CSD_MODE_CONFIG, EXT_CSD_NORMAL_MODE);
 	ret = ioctl(dev_fd, MMC_IOC_CMD, &cmd);
@@ -3460,7 +3451,13 @@ int do_general_cmd_read(int nargs, char **argv)
 	__u8 buf[512];
 	__u32 arg = 0x01;
 	int ret = -EINVAL, i;
-	struct mmc_ioc_cmd idata;
+	struct mmc_ioc_cmd idata = {
+		.write_flag = 0,
+		.opcode = MMC_GEN_CMD,
+		.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC,
+		.blksz = 512,
+		.blocks = 1
+	};
 
 	if (nargs != 2 && nargs != 3) {
 		print_usage(do_general_cmd_read);
@@ -3483,13 +3480,7 @@ int do_general_cmd_read(int nargs, char **argv)
 		}
 	}
 
-	memset(&idata, 0, sizeof(idata));
-	idata.write_flag = 0;
-	idata.opcode = MMC_GEN_CMD;
 	idata.arg = arg;
-	idata.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
-	idata.blksz = 512;
-	idata.blocks = 1;
 	mmc_ioc_cmd_set_data(idata, buf);
 
 	ret = ioctl(dev_fd, MMC_IOC_CMD, &idata);
@@ -3511,7 +3502,11 @@ out:
 
 static void issue_cmd0(char *device, __u32 arg)
 {
-	struct mmc_ioc_cmd idata;
+	struct mmc_ioc_cmd idata = {
+		.opcode = MMC_GO_IDLE_STATE,
+		.flags = MMC_RSP_NONE | MMC_CMD_BC,
+		.arg = arg,
+	};
 	int fd;
 
 	fd = open(device, O_RDWR);
@@ -3519,11 +3514,6 @@ static void issue_cmd0(char *device, __u32 arg)
 		perror("open");
 		exit(1);
 	}
-
-	memset(&idata, 0, sizeof(idata));
-	idata.opcode = MMC_GO_IDLE_STATE;
-	idata.arg = arg;
-	idata.flags = MMC_RSP_NONE | MMC_CMD_BC;
 
 	/* No need to check for error, it is expected */
 	ioctl(fd, MMC_IOC_CMD, &idata);
