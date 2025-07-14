@@ -2865,6 +2865,58 @@ int do_cache_dis(int nargs, char **argv)
 	return do_cache_ctrl(0, nargs, argv);
 }
 
+int do_cache_flush(int nargs, char **argv)
+{
+	__u8 ext_csd[512];
+	int fd, ret;
+	char *device;
+
+	device = argv[1];
+
+	fd = open(device, O_RDWR);
+	if (fd < 0) {
+		perror("open");
+		exit(1);
+	}
+
+	ret = read_extcsd(fd, ext_csd);
+	if (ret) {
+		fprintf(stderr, "Could not read EXT_CSD from %s\n", device);
+		exit(1);
+	}
+
+	if (ext_csd[EXT_CSD_REV] < EXT_CSD_REV_V5_0) {
+		fprintf(stderr,
+			"The CACHE FLUSH option is only availabe on devices >= "
+			"MMC 5.0 %s\n", device);
+		exit(1);
+	}
+
+	/* If the cache size is zero, this device does not have a cache */
+	if (!(ext_csd[EXT_CSD_CACHE_SIZE_3] ||
+			ext_csd[EXT_CSD_CACHE_SIZE_2] ||
+			ext_csd[EXT_CSD_CACHE_SIZE_1] ||
+			ext_csd[EXT_CSD_CACHE_SIZE_0])) {
+		fprintf(stderr,
+			"The CACHE option is not available on %s\n",
+			device);
+		exit(1);
+	}
+
+	if (ext_csd[EXT_CSD_CACHE_CTRL]) {
+		ret = write_extcsd_value(fd, EXT_CSD_FLUSH_CACHE, 1, 0);
+		if (ret) {
+			fprintf(stderr,
+				"Could not write 0x%02x to EXT_CSD[%d] in %s\n",
+				EXT_CSD_FLUSH_CACHE, EXT_CSD_FLUSH_CACHE, device);
+			exit(1);
+		}
+	}
+
+	close(fd);
+	return 0;
+}
+
 static int erase(int dev_fd, __u32 argin, __u32 start, __u32 end)
 {
 	int ret = 0;

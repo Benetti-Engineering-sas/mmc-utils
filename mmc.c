@@ -231,6 +231,11 @@ static struct Command commands[] = {
 		"Disable the eMMC cache feature on <device>.\n"
 		"NOTE! The cache is an optional feature on devices >= eMMC4.5.",
 	},
+	{ do_cache_flush, 1,
+	  "cache flush", "<device>\n"
+		"flush the eMMC cache <device>.\n"
+		"NOTE! The cache is an optional feature on devices >= eMMC5.0.",
+	},
 	{ do_read_csd, -1,
 	  "csd read", "<device path>\n"
 		  "Print CSD data from <device path>.\n"

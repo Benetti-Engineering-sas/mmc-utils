@@ -107,3 +107,8 @@ Running mmc-utils
     ``mmc rpmb secure-wp-enable <rpmb device> <key file>``
         Disable updating WP related EXT_CSD and CSD fields.
         Applicable only if secure write protect mode is enabled.
+
+
+    ``mmc cache flush <device>``
+        Flush the eMMC cache for <device>.
+        Applicable only if device version >= eMMC5.0.
